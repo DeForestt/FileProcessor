@@ -31,6 +31,8 @@ def ENSProc():
     df["DATE"] = input("ENS Paused:: Enter Date (YYYYMMDD): ")
 
     df.T.apply(lambda row: ''.join(map(str, row)))
+    #remove first three rows
+    df = df.drop(df.index[0:3])
 
     #write to CSV file
     df.to_csv(f"BanUpdate1.prn", index=False, header=False)
