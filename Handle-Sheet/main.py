@@ -8,6 +8,7 @@ from Processes.Lumen import lumenProc
 from Processes.PYProc import PyProc
 from Processes.FedExPhoneProc import FedexPhoneProc
 from Processes.XPOAgingProc import XPOAgingProc
+from Processes.ENSProc import ENSProc
 import datetime
 import threading
 
@@ -29,6 +30,9 @@ def main():
     XPOAging = threading.Thread(target=XPOAgingProc)
     tXPOAging = False
 
+    ENS = threading.Thread(target=ENSProc)
+    tENS = False
+
     #create current date processed folder
     if not exists('Processed'): os.mkdir('Processed')
     if not exists('Processed\\' + datetime.datetime.now().strftime("%Y-%m-%d")): os.mkdir('Processed\\' + datetime.datetime.now().strftime("%Y-%m-%d"))
@@ -40,6 +44,10 @@ def main():
     if exists("PYInput.xlsx"):
         PY.start()
         tPY = True
+    
+    if exists("ENSInput.xlsx"):
+        ENS.start()
+        tENS = True
     
     if exists("FedEx-Customer-Phone-Numbers.xlsx"):
         fedex.start()
@@ -71,6 +79,11 @@ def main():
         os.rename("IN-AGING-NOT-IN-SYSTEM.TXT", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\IN-AGING-NOT-IN-SYSTEM.TXT")
         os.rename("IN-SYSTEM-NOT-IN-AGING.TXT", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\IN-SYSTEM-NOT-IN-AGING.TXT")
 
+    if tENS:
+        ENS.join()
+        #Move ENS to processed folder
+        os.rename("ENSInput.xlsx", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\ENSInput.xlsx")
+        
     print("All Processes Complete")
 
 if __name__ == "__main__":
