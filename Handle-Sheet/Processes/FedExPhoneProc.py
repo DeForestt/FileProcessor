@@ -32,12 +32,26 @@ def format_data(df):
 
     #apply padding to dataframe
     df['cust_nbr'] = df['cust_nbr'].apply(lambda x: pad_string(x, 12))
+    
+    #apply quality check
+    quality_check(df)
     return df
 
 #Pad string with spaces
 def pad_string(string, length):
     return string.ljust(length, ' ')
 
+
+#Quality Check
+def quality_check(df):
+    #check row width
+    for row in df.itertuples():
+        ph_nbr_len = len(row.ph_nbr)
+        area_cd_len = len(row.ph_nbr_area_cd)
+        if ph_nbr_len != 7:
+            print("Row: " + str(row) + " phone number is not 7 characters long")
+        if area_cd_len != 3:
+            print("Row: " + str(row) + " area code is not 3 characters long")
 
 def FedexPhoneProc():
     df = get_data(FILENAME)
