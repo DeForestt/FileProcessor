@@ -26,11 +26,11 @@ def genDic(colors : list):
 def create(strin: list, index):
     map(str.strip, strin)
     if len(strin) == 3:
-        if ' ' in strin[2]:
+        if ' ' in strin[2].strip():
             spl = strin[2].split()
             return [strin[0], strin[1], '', spl[0], '', spl[1], 1]
     elif len(strin) == 4:
-        if ' ' in strin[3]:
+        if ' ' in strin[3].strip():
             spl = strin[3].split()
             return [strin[0], strin[1], strin[2], strin[3], spl[0], spl[1], 1]
     elif len(strin) == 5:
