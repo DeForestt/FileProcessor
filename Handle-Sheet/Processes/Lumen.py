@@ -27,12 +27,14 @@ def create(strin: list, index):
     map(str.strip, strin)
     if len(strin) == 3:
         if ' ' in strin[2].strip():
-            spl = strin[2].split()
+            spl = strin[2].strip().split(' ')
+            map(str.strip, spl)
             return [strin[0], strin[1], '', spl[0], '', spl[1], 1]
     elif len(strin) == 4:
         if ' ' in strin[3].strip():
-            spl = strin[3].split()
-            return [strin[0], strin[1], strin[2], strin[3], spl[0], spl[1], 1]
+            spl = strin[3].strip().split(' ')
+            map(str.strip, spl)
+            return [strin[0], strin[1], strin[2], spl[0], '', spl[1], 1]
     elif len(strin) == 5:
         return [strin[0], strin[1], '' ,strin[2], strin[3], strin[4], 1]
     elif len(strin) == 6:
