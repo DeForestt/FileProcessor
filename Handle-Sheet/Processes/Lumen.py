@@ -38,7 +38,6 @@ def create(strin: list, index):
     elif len(strin) == 6:
         return trp(strin, 7)
 
-    
     ret = trp(strin, 7)
     ret[6] = 1
     return ret
