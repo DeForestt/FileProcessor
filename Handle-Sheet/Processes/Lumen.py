@@ -24,13 +24,14 @@ def genDic(colors : list):
 
 #create an address record
 def create(strin: list, index):
+    map(str.strip, strin)
     if len(strin) == 3:
-        if ' ' in strin[2].strip():
-            spl = strin[2].strip().split()
+        if ' ' in strin[2]:
+            spl = strin[2].split()
             return [strin[0], strin[1], '', spl[0], '', spl[1], 1]
     elif len(strin) == 4:
-        if ' ' in strin[3].strip():
-            spl = strin[3].strip().split()
+        if ' ' in strin[3]:
+            spl = strin[3].split()
             return [strin[0], strin[1], strin[2], strin[3], spl[0], spl[1], 1]
     elif len(strin) == 5:
         return [strin[0], strin[1], '' ,strin[2], strin[3], strin[4], 1]
@@ -59,6 +60,8 @@ def lumenProc():
     colorDict = genDic(colors)
 
     df = pandas.read_excel(xl, sheet_name='Worksheet', index_col=None, header = 0)
+    #rename df header
+    df.set_axis(['Account No','Customer Name','Amount', 'Address', 'CONTACT NAME', 'Dunning Email', 'Dunning Phone', 'Dunning ', 'Dunning .1', 'Dunning .2'], axis=1, inplace=True)
     addresses = pandas.DataFrame(columns=["Street", "City", "County", "State", "Country", "Zip", "Review"])
 
     addressPut = list()
