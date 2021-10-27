@@ -51,9 +51,9 @@ def trp(l, n):
         r.extend([0] * (n - len(r)))
     return r
 
-def lumenProc():
+def lumenProc(filename : str):
     print("Starting Processing Lumen Report...")
-    xl = 'LumenInput.xlsx'
+    xl = filename
     wb = load_workbook(xl, data_only = True)
     sh = wb['Worksheet']
 
