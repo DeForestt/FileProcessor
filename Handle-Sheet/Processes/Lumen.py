@@ -95,9 +95,11 @@ def lumenProc():
     for index, frame in enumerate(origPut):
         out = pandas.concat([frame[['Account No','Customer Name','Amount', 'Address']], addressPut[index], frame[['CONTACT NAME', 'Dunning Email', 'Dunning Phone', 'Dunning ', 'Dunning .1', 'Dunning .2']]], axis=1)
         #remove '-' from phone number
-        out['Dunning Phone'] = out['Dunning Phone'].str.replace('-', '')
+        out['Dunning Phone'] = out['Dunning Phone'].map(lambda x: str(x).replace('-', ''))
         #remove '-' from Zip
-        out['Zip'] = out['Zip'].str.replace('-', '')
+        out['Zip'] = out['Zip'].map(lambda x: str(x).replace('-', ''))
+        #remove everything after 'ext' in dunning phone
+        out['Dunning Phone'] = out['Dunning Phone'].map(lambda x: str(x).lower().split('ext')[0])
         out.to_excel(writer, sheet_name='Coustomer List-{}'.format(index), index=False)
     writer.save()
     print("Lumen Report Processed Sucsessfully")
