@@ -4,7 +4,6 @@ from openpyxl.worksheet import worksheet
 import pandas
 from openpyxl import load_workbook
 import warnings
-import math
 
 #Get Data from Excel File
 def get_data(filename: str):
