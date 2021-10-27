@@ -1,4 +1,4 @@
-from re import I, S
+from re import I, S, T
 from os.path import exists
 import os
 from openpyxl.worksheet import worksheet
@@ -14,75 +14,48 @@ import threading
 
 
 
-
+#struct to hold a process name and a boolean to indicate if it is running
+class Process:
+    def __init__(self, name, running, function):
+        self.name = name
+        self.running = running
+        self.function = function
     
 
 def main():
-    lumen = threading.Thread(target=lumenProc)
-    tlumen = False
-
-    PY = threading.Thread(target=PyProc)
-    tPY = False
-
-    fedex = threading.Thread(target=FedexPhoneProc)
-    tFedEx = False
-
-    XPOAging = threading.Thread(target=XPOAgingProc)
-    tXPOAging = False
-
-    ENS = threading.Thread(target=ENSProc)
-    tENS = False
 
     #create current date processed folder
     if not exists('Processed'): os.mkdir('Processed')
     if not exists('Processed\\' + datetime.datetime.now().strftime("%Y-%m-%d")): os.mkdir('Processed\\' + datetime.datetime.now().strftime("%Y-%m-%d"))
-
-    if exists("LumenInput.xlsx"):
-        lumen.start()
-        tlumen = True
-
-    if exists("PYInput.xlsx"):
-        PY.start()
-        tPY = True
     
-    if exists("ENSInput.xlsx"):
-        ENS.start()
-        tENS = True
-    
-    if exists("FedEx-Customer-Phone-Numbers.xlsx"):
-        fedex.start()
-        tFedEx = True
+    #create list of processes
+    Processes = []
+
+    #loop through every file that starts with 'PY'
+    for file in os.listdir('.'):
+        if file.startswith('PY'):
+            PY = threading.Thread(target=PyProc, args=(file,))
+            PY.start()
+            Processes.append(Process(file, True, PY))
+        if file.startswith('ENS'):
+            ENS = threading.Thread(target=ENSProc, args=(file,))
+            Processes.append(Process(file, True, ENS))
+        if file.startswith('FedEx-Customer-Phone-Numbers'):
+            FedexPhone = threading.Thread(target=FedexPhoneProc, args=(file,))
+            FedexPhoneProc.start()
+            Processes.append(Process(file, True, FedexPhone))
+        if file.startswith('LumenInput'):
+            lumen = threading.Thread(target=lumenProc, args=(file,))
+            lumen.start()
+            Processes.append(Process(file, True, lumen))
 
     if exists("AGING-WITH-ADDED-COLUMNS.TXT") and exists("IN-AGING-NOT-IN-SYSTEM.TXT") and exists("IN-SYSTEM-NOT-IN-AGING.TXT"):
-        XPOAging.start()
-        tXPOAging = True
+        XPOAging = threading.Thread(target=XPOAgingProc, args=())
+        Processes.append(Processes("AGING-WITH-ADDED-COLUMNS.TXT", True, XPOAging))
 
-    if tlumen:
-        lumen.join()
-        #Move Lumen to processed folder
-        os.rename("LumenInput.xlsx", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\LumenInput.xlsx")
-
-    if tPY:
-        PY.join()
-        #Move PY to processed folder
-        os.rename("PYInput.xlsx", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\PYInput.xlsx")
-
-    if tFedEx:
-        fedex.join()
-        #Move FedEx to processed folder
-        os.rename("FedEx-Customer-Phone-Numbers.xlsx", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\FedEx-Customer-Phone-Numbers.xlsx")
-
-    if tXPOAging: 
-        XPOAging.join()
-        #Move XPO Aging to processed folder
-        os.rename("AGING-WITH-ADDED-COLUMNS.TXT", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\AGING-WITH-ADDED-COLUMNS.TXT")
-        os.rename("IN-AGING-NOT-IN-SYSTEM.TXT", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\IN-AGING-NOT-IN-SYSTEM.TXT")
-        os.rename("IN-SYSTEM-NOT-IN-AGING.TXT", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\IN-SYSTEM-NOT-IN-AGING.TXT")
-
-    if tENS:
-        ENS.join()
-        #Move ENS to processed folder
-        os.rename("ENSInput.xlsx", "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\ENSInput.xlsx")
+    for process in Processes:
+        process.function.join()
+        os.rename(process.name, "Processed\\" + datetime.datetime.now().strftime("%Y-%m-%d") + "\\" + process.name + datetime.time + ".xlsx")
         
     print("All Processes Complete")
 

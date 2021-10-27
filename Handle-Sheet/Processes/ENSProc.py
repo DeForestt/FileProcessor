@@ -1,12 +1,11 @@
 import pandas as pd
 import os
 
-ENS = "ENSInput.xlsx"
 
-def ENSProc():
-    print("Processing ENS File...")
+def ENSProc(file_name: str):
+    print("Processing file_name File...")
     
-    xl = pd.ExcelFile(ENS)
+    xl = pd.ExcelFile(file_name)
     
     #check for number of sheets
     if len(xl.sheet_names) > 1:
@@ -28,7 +27,7 @@ def ENSProc():
     df.insert(2, '    ', "   ")
 
     #Set DATE Column to user input
-    df["DATE"] = input("ENS Paused:: Enter Date (YYYYMMDD): ")
+    df["DATE"] = input("file_name Paused:: Enter Date (YYYYMMDD): ")
 
     df.T.apply(lambda row: ''.join(map(str, row)))
     #remove first three rows
